@@ -38,9 +38,21 @@ PYTHONPATH=src python -m social_comment_agent.cli \
 - `out/demo/agent_tasks/acceptance.json`：验收任务包
 - `out/demo/agent_tasks/dispatch_summary.md`：任务派发摘要
 
+## LLM 配置
+
+项目提供 `.env.example` 模板。复制为本地文件后填写真实密钥，真实 `.env*` 文件已被 `.gitignore` 忽略。
+
+```bash
+cp .env.example .env.local
+# 编辑 .env.local，填写 SOCIAL_COMMENT_LLM_ENDPOINT / SOCIAL_COMMENT_LLM_API_KEY / SOCIAL_COMMENT_LLM_MODEL
+scripts/check_llm_env.sh
+```
+
+检查脚本不会打印真实密钥，只会显示是否已配置。未配置完整时，`--analyzer llm` 会安全降级为规则分析。
+
 ## 目录扫描 watcher
 
-用于定时扫描授权导出的评论文件。第一次处理新文件时输出 JSON 摘要，第二次遇到同一文件会静默，适合接 Hermes cron。
+用于定时扫描授权导出的评论文件。第一次处理新文件时输出 Telegram 友好的摘要，第二次遇到同一文件会静默，适合接 Hermes cron。
 
 ```bash
 mkdir -p data/inbox
