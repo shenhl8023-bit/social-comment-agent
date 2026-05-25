@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import os
+import re
 import urllib.error
 import urllib.request
 from dataclasses import dataclass
@@ -79,7 +80,7 @@ class LLMAnalyzer:
             body = exc.read().decode("utf-8", errors="replace")
             raise RuntimeError(f"LLM request failed: HTTP {exc.code}: {body[:500]}") from exc
         content = data["choices"][0]["message"]["content"]
-        parsed = json.loads(content)
+        parsed = _loads_llm_json(content)
         raw_insights = parsed.get("insights", [])
         if not isinstance(raw_insights, list):
             raise ValueError("LLM response field 'insights' must be a list")
@@ -119,6 +120,17 @@ def _build_prompt(comments: list[Comment], top_n: int) -> str:
         f"输出 JSON schema 示例：{json.dumps(schema, ensure_ascii=False)}\n"
         f"评论：{json.dumps(compact_comments, ensure_ascii=False)}"
     )
+
+
+def _loads_llm_json(content: str) -> dict[str, Any]:
+    stripped = content.strip()
+    fence_match = re.fullmatch(r"```(?:json)?\s*(.*?)\s*```", stripped, flags=re.DOTALL | re.IGNORECASE)
+    if fence_match:
+        stripped = fence_match.group(1).strip()
+    parsed = json.loads(stripped)
+    if not isinstance(parsed, dict):
+        raise ValueError("LLM response JSON must be an object")
+    return parsed
 
 
 def _to_insight(item: dict[str, Any], comments: list[Comment]) -> Insight:
