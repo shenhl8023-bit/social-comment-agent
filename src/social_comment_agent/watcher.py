@@ -3,6 +3,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import re
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -26,6 +27,54 @@ def load_state(path: Path) -> dict[str, str]:
 def save_state(path: Path, state: dict[str, str]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(state, ensure_ascii=False, indent=2, sort_keys=True), encoding="utf-8")
+
+
+def _extract_report_snippets(markdown_path: str | Path, max_insights: int = 5) -> dict[str, object]:
+    path = Path(markdown_path)
+    if not path.exists():
+        return {"total": "", "summary": "", "insights": []}
+
+    text = path.read_text(encoding="utf-8")
+    total_match = re.search(r"^评论总数：.+$", text, flags=re.MULTILINE)
+    summary_match = re.search(r"## 摘要\s+(.+?)(?:\n## |\Z)", text, flags=re.DOTALL)
+    insight_matches = re.findall(r"^## \d+\.\s+(.+)$", text, flags=re.MULTILINE)
+
+    summary = ""
+    if summary_match:
+        summary = " ".join(summary_match.group(1).strip().split())
+    return {
+        "total": total_match.group(0) if total_match else "",
+        "summary": summary,
+        "insights": insight_matches[:max_insights],
+    }
+
+
+def format_processed_summary(processed: list[dict[str, str]]) -> str:
+    if not processed:
+        return ""
+
+    lines = ["社交评论分析完成", ""]
+    for idx, item in enumerate(processed, start=1):
+        snippets = _extract_report_snippets(item.get("markdown", ""))
+        input_name = Path(item.get("input", "")).name or item.get("input", "未知输入")
+        lines.extend([
+            f"## {idx}. {input_name}",
+            f"归档目录：{item.get('archive', '')}",
+        ])
+        total = snippets["total"]
+        summary = snippets["summary"]
+        insights = snippets["insights"]
+        if total:
+            lines.append(str(total))
+        if summary:
+            lines.extend(["", "摘要：", str(summary)])
+        if isinstance(insights, list) and insights:
+            lines.extend(["", "Top 需求："])
+            lines.extend(f"- {insight}" for insight in insights)
+        if item.get("markdown"):
+            lines.extend(["", f"完整报告：{item['markdown']}"])
+        lines.append("")
+    return "\n".join(lines).strip()
 
 
 def scan_once(
@@ -72,8 +121,9 @@ def main() -> None:
     parser.add_argument("--analyzer", choices=("rules", "llm"), default="rules", help="Analyzer mode")
     args = parser.parse_args()
     processed = scan_once(args.inbox, args.archive, args.state, platform=args.platform, analyzer_mode=args.analyzer)
-    if processed:
-        print(json.dumps({"processed": processed}, ensure_ascii=False, indent=2))
+    summary = format_processed_summary(processed)
+    if summary:
+        print(summary)
 
 
 if __name__ == "__main__":

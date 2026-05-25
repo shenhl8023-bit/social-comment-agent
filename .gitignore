@@ -10,3 +10,5 @@ venv/
 .DS_Store
 out/
 archive/
+.social_comment_watch_state.json
+data/inbox/
