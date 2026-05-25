@@ -15,6 +15,19 @@ cd /mnt/d/CodeProj/social-comment-agent
 PYTHONPATH=src python -m social_comment_agent.cli --input data/raw/sample_comments.jsonl --out out/demo --platform demo
 ```
 
+可选：启用 OpenAI-compatible LLM 分析。没有配置密钥时会自动降级为规则分析。
+
+```bash
+export SOCIAL_COMMENT_LLM_ENDPOINT="https://api.openai.com/v1"
+export SOCIAL_COMMENT_LLM_API_KEY="..."
+export SOCIAL_COMMENT_LLM_MODEL="gpt-4o-mini"
+PYTHONPATH=src python -m social_comment_agent.cli \
+  --input data/raw/sample_comments.jsonl \
+  --out out/demo-llm \
+  --platform demo \
+  --analyzer llm
+```
+
 输出：
 
 - `out/demo/pm_insights.md`：给产品经理 agent 的需求洞察报告
@@ -25,17 +38,31 @@ PYTHONPATH=src python -m social_comment_agent.cli --input data/raw/sample_commen
 - `out/demo/agent_tasks/acceptance.json`：验收任务包
 - `out/demo/agent_tasks/dispatch_summary.md`：任务派发摘要
 
+## 目录扫描 watcher
+
+用于定时扫描授权导出的评论文件。第一次处理新文件时输出 JSON 摘要，第二次遇到同一文件会静默，适合接 Hermes cron。
+
+```bash
+mkdir -p data/inbox
+cp data/raw/sample_comments.jsonl data/inbox/sample_comments.jsonl
+PYTHONPATH=src python -m social_comment_agent.watcher \
+  --inbox data/inbox \
+  --archive archive \
+  --state .social_comment_watch_state.json \
+  --platform demo
+```
+
 ## 流程
 
 1. `collector`：读取评论导出并去重。
-2. `analyzer`：按需求主题聚类，提取痛点、价值、建议方案和证据评论。
+2. `analyzer` / `llm_analyzer`：按需求主题聚类或调用 LLM，提取痛点、价值、建议方案和证据评论。
 3. `archiver`：归档产品经理报告。
 4. `task_router`：按产品经理、开发、测试、验收拆分任务。
-5. `cli`：串联完整流水线。
+5. `watcher`：扫描导出目录，增量生成归档。
+6. `cli`：串联完整流水线。
 
 ## 后续升级
 
-- 接入真实 LLM：替换 `DemandAnalyzer.analyze()` 内部逻辑，保持 `AnalysisReport` 输出结构不变。
 - 接入平台 API：新增 collector 适配器，但保留合规授权和限流。
 - 接入 Hermes Kanban：将 `agent_tasks/*.json` 自动写入看板，分配给不同 profile/agent。
 - 定时任务：用 Hermes cron 定期分析导出目录并推送报告给产品经理。
