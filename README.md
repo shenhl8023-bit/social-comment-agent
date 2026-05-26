@@ -216,6 +216,31 @@ PYTHONPATH=src python -m social_comment_agent.cli \
 
 注意：默认不会创建 Kanban 卡片；只有显式传入 `--dispatch-kanban` 才会派发。
 
+## 需求趋势分析
+
+当评论样本覆盖多个周期时，可以生成按周/按月的主题趋势报告，帮助 PM 识别“本周升温/降温”的用户问题。
+
+```bash
+PYTHONPATH=src python -m social_comment_agent.trends \
+  --input data/samples/historical_product_feedback_2weeks.csv \
+  --out out/trends-weekly \
+  --platform authorized_export \
+  --bucket week
+
+PYTHONPATH=src python -m social_comment_agent.trends \
+  --input data/samples/historical_product_feedback_2weeks.csv \
+  --out out/trends-monthly \
+  --platform authorized_export \
+  --bucket month
+```
+
+输出：
+
+- `out/trends-weekly/trend_report.md`：PM 可读趋势报告，包含当前周期、上一周期、主题增减和代表评论
+- `out/trends-weekly/trend_report.json`：结构化趋势数据，便于后续进入日报/周报或 Kanban
+
+样例数据：`data/samples/historical_product_feedback_2weeks.csv` 是两周授权导出风格评论，用于验证趋势链路。
+
 ## 流程
 
 1. `import_wizard`：预检授权导出的 `.csv/.json/.jsonl`，可套用平台模板确认字段映射、跳过行、重复评论和推荐字段缺失。
