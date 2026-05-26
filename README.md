@@ -99,17 +99,44 @@ watcher 的 Kanban 行为和一次性 CLI 一样安全：
 - `--dispatch-kanban`：显式创建 Kanban 卡片，并生成 `kanban_dispatch/kanban_dispatch.md|json` 审计报告。
 - 不传这两个参数时，只生成 PM 洞察和 agent task 文件。
 
-Hermes cron 可用脚本包装后以 `--no-agent` 静默运行；没有新文件时 watcher 不输出内容。
+### Hermes cron 准生产运行
+
+已验证的默认 cron wrapper 放在 `~/.hermes/scripts/social_comment_agent_watch.sh`，它会调用项目内的 `scripts/social_comment_watch.sh`。默认配置：
+
+- 扫描目录：`/mnt/d/CodeProj/social-comment-agent/data/inbox`
+- 归档目录：`/mnt/d/CodeProj/social-comment-agent/archive`
+- 状态文件：`/mnt/d/CodeProj/social-comment-agent/.social_comment_watch_state.json`
+- 分析器：`rules`
+- Kanban 模式：`dry-run`
+- Kanban workspace：`/mnt/d/CodeProj/social-comment-agent`
+- Kanban tenant：`social-comment-agent`
+
+cron job 推荐配置：
 
 ```bash
-# 可选环境变量：SOCIAL_COMMENT_AGENT_INBOX / ARCHIVE / PLATFORM / ANALYZER
-# Kanban 模式：none | dry-run | dispatch
-export SOCIAL_COMMENT_AGENT_KANBAN_MODE=dry-run
 hermes cron create "*/30 * * * *" \
-  --name social-comment-watch \
-  --script /mnt/d/CodeProj/social-comment-agent/scripts/social_comment_watch.sh \
+  --name social-comment-agent-watch \
+  --script social_comment_agent_watch.sh \
   --no-agent
 ```
+
+也可以手动验证首跑/二跑行为：
+
+```bash
+mkdir -p data/inbox
+cp data/samples/realistic_product_feedback_30.csv data/inbox/realistic_product_feedback_30.csv
+~/.hermes/scripts/social_comment_agent_watch.sh   # 首跑：输出摘要
+~/.hermes/scripts/social_comment_agent_watch.sh   # 二跑：没有新文件则静默
+```
+
+环境变量可覆盖默认值：
+
+```bash
+SOCIAL_COMMENT_AGENT_KANBAN_MODE=none ~/.hermes/scripts/social_comment_agent_watch.sh
+SOCIAL_COMMENT_AGENT_ANALYZER=llm ~/.hermes/scripts/social_comment_agent_watch.sh
+```
+
+注意：cron 默认只做 dry-run；只有显式设置 `SOCIAL_COMMENT_AGENT_KANBAN_MODE=dispatch` 才会真实创建 Kanban 卡片。
 
 ## Hermes Kanban dry-run / dispatch（可选）
 
