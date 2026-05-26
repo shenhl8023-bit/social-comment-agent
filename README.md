@@ -38,6 +38,32 @@ PYTHONPATH=src python -m social_comment_agent.cli \
 - `out/demo/agent_tasks/acceptance.json`：验收任务包
 - `out/demo/agent_tasks/dispatch_summary.md`：任务派发摘要
 
+## 真实样本 demo
+
+项目额外提供了一个可提交到 Git 的“授权导出评论”样本：`data/samples/realistic_product_feedback_30.csv`。它包含 30 条中文产品反馈，覆盖小红书、B站、抖音、微博、App Store、社群等来源，用于演示从评论到 PM 洞察、任务拆分、Kanban dry-run 的完整链路。
+
+```bash
+cd /mnt/d/CodeProj/social-comment-agent
+scripts/demo_realistic.sh
+```
+
+默认输出：
+
+- `out/realistic-demo/rules-kanban/pm_insights.md`：规则分析生成的 PM 洞察报告
+- `out/realistic-demo/rules-kanban/agent_tasks/*.json`：产品、开发、测试、验收任务包
+- `out/realistic-demo/rules-kanban/kanban_dry_run/kanban_dry_run.md`：可审阅的 Hermes Kanban 创建命令，不会真正创建卡片
+- `out/realistic-demo/llm-fallback/pm_insights.md`：LLM 模式输出；未配置密钥时会安全降级为规则分析
+- `out/realistic-demo/analysis_comparison.md`：规则版与 LLM/fallback 版对比
+
+可选覆盖参数：
+
+```bash
+SOCIAL_COMMENT_REALISTIC_OUT=out/my-demo \
+SOCIAL_COMMENT_KANBAN_WORKSPACE=/mnt/d/CodeProj/social-comment-agent \
+SOCIAL_COMMENT_KANBAN_TENANT=social-comment-agent \
+scripts/demo_realistic.sh data/samples/realistic_product_feedback_30.csv
+```
+
 ## LLM 配置
 
 项目提供 `.env.example` 模板。复制为本地文件后填写真实密钥，真实 `.env*` 文件已被 `.gitignore` 忽略。
