@@ -1,0 +1,22 @@
+{
+  "name": "bilibili",
+  "display_name": "B站",
+  "description": "B站创作中心或授权导出的评论数据字段提示。",
+  "default_platform": "bilibili",
+  "field_aliases": {
+    "text": ["评论内容", "评论", "内容", "message", "content", "text"],
+    "comment_id": ["评论ID", "rpid", "comment_id", "id"],
+    "author": ["用户昵称", "昵称", "会员名", "uname", "user", "author"],
+    "post_id": ["稿件ID", "视频ID", "aid", "bvid", "video_id", "post_id"],
+    "created_at": ["评论时间", "ctime", "发布时间", "created_at", "time"],
+    "platform": ["平台", "platform"],
+    "url": ["视频链接", "链接", "url"],
+    "likes": ["点赞数", "like", "like_count", "likes"],
+    "replies": ["回复数", "reply_count", "replies"]
+  },
+  "recommended_fields": ["评论内容", "用户昵称", "评论时间", "稿件ID", "评论ID", "点赞数"],
+  "notes": [
+    "优先使用创作中心/官方 API/授权导出数据。",
+    "B站评论时间有时是 Unix 时间戳，趋势分析阶段可再做时间标准化。"
+  ]
+}

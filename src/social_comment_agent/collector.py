@@ -8,11 +8,11 @@ from typing import Iterable, Any
 from .models import Comment
 
 
-TEXT_KEYS = ("text", "content", "comment", "body", "message", "评论", "内容", "评论内容")
-ID_KEYS = ("comment_id", "id", "评论ID")
-AUTHOR_KEYS = ("author", "user", "nickname", "用户名")
-POST_KEYS = ("post_id", "aweme_id", "note_id", "video_id", "帖子ID")
-TIME_KEYS = ("created_at", "time", "date", "发布时间")
+TEXT_KEYS = ("text", "content", "comment", "body", "message", "评论", "内容", "评论内容", "消息内容", "反馈内容", "评价内容")
+ID_KEYS = ("comment_id", "id", "评论ID", "评论id", "cid", "rpid", "mid", "评价ID", "review_id", "消息ID")
+AUTHOR_KEYS = ("author", "user", "nickname", "用户名", "用户昵称", "昵称", "作者", "发送人", "会员名")
+POST_KEYS = ("post_id", "aweme_id", "note_id", "video_id", "帖子ID", "笔记ID", "视频ID", "作品ID", "微博ID", "稿件ID", "应用ID", "群ID")
+TIME_KEYS = ("created_at", "time", "date", "发布时间", "评论时间", "创建时间", "发送时间", "评价时间")
 
 
 def _first(row: dict[str, Any], keys: tuple[str, ...], default: str = "") -> str:
@@ -28,7 +28,7 @@ def normalize_comment(row: dict[str, Any], platform: str = "unknown") -> Comment
     if not text:
         raise ValueError("comment text is required")
     metrics: dict[str, int] = {}
-    for key in ("likes", "like_count", "点赞数", "replies", "reply_count"):
+    for key in ("likes", "like_count", "点赞数", "digg_count", "like", "replies", "reply_count", "回复数", "rating", "评分"):
         if key in row:
             try:
                 metrics[key] = int(row[key])

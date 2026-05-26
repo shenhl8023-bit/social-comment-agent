@@ -1,0 +1,20 @@
+{
+  "name": "wechat_group",
+  "display_name": "微信/社群",
+  "description": "微信社群、企业微信群或客服群授权整理后的反馈表字段提示。",
+  "default_platform": "wechat_group",
+  "field_aliases": {
+    "text": ["消息内容", "反馈内容", "评论内容", "内容", "message", "content", "text"],
+    "comment_id": ["消息ID", "记录ID", "message_id", "id"],
+    "author": ["发送人", "用户昵称", "群成员", "nickname", "user", "author"],
+    "post_id": ["群ID", "会话ID", "group_id", "chat_id", "post_id"],
+    "created_at": ["发送时间", "时间", "created_at", "time", "date"],
+    "platform": ["平台", "platform"],
+    "url": ["来源链接", "url"]
+  },
+  "recommended_fields": ["消息内容", "发送人", "发送时间", "群ID", "消息ID"],
+  "notes": [
+    "只处理已授权、已导出的社群反馈表。",
+    "导入前建议脱敏手机号、微信号、订单号等个人敏感信息。"
+  ]
+}

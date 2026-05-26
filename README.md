@@ -74,15 +74,34 @@ PYTHONPATH=src python -m social_comment_agent.import_wizard \
   --platform authorized_export
 ```
 
+也可以应用内置平台模板，让预检按常见导出字段优先识别：
+
+```bash
+PYTHONPATH=src python -m social_comment_agent.import_wizard --list-platform-templates
+
+PYTHONPATH=src python -m social_comment_agent.import_wizard \
+  path/to/xiaohongshu_export.csv \
+  --platform-template xiaohongshu
+```
+
+当前内置模板：
+
+- `xiaohongshu`：小红书创作者/蒲公英/运营后台授权导出
+- `bilibili`：B站创作中心或授权导出
+- `douyin`：抖音创作者服务中心或授权导出
+- `weibo`：微博创作者/企业账号后台或授权导出
+- `app_store`：App Store Connect / 应用商店评价导出
+- `wechat_group`：微信/企业微信/社群反馈整理表
+
 输出会包含：
 
 - 文件格式和总行数
 - 可识别评论数、去重后评论数
-- 识别到的 `text/author/created_at/post_id/comment_id/platform` 字段
-- 缺少评论内容、重复评论、缺少平台/ID 等风险提示
+- 应用的平台模板，以及识别到的 `text/author/created_at/post_id/comment_id/platform/likes/rating/url` 等字段
+- 缺少评论内容、重复评论、缺少平台/ID、模板推荐字段缺失等风险提示
 - 是否建议直接放入 `data/inbox/`
 
-当前支持 `.csv/.json/.jsonl`，并兼容常见字段别名，例如 `text/content/comment/body/message/评论/内容/评论内容`。
+当前支持 `.csv/.json/.jsonl`，并兼容常见字段别名，例如 `text/content/comment/body/message/评论/内容/评论内容/消息内容/评价内容`。
 
 ## LLM 配置
 
@@ -199,7 +218,7 @@ PYTHONPATH=src python -m social_comment_agent.cli \
 
 ## 流程
 
-1. `import_wizard`：预检授权导出的 `.csv/.json/.jsonl`，确认字段映射、跳过行和重复评论。
+1. `import_wizard`：预检授权导出的 `.csv/.json/.jsonl`，可套用平台模板确认字段映射、跳过行、重复评论和推荐字段缺失。
 2. `collector`：读取评论导出并去重。
 3. `analyzer` / `llm_analyzer`：按需求主题聚类或调用 LLM，提取痛点、价值、建议方案和证据评论。
 4. `archiver`：归档产品经理报告。
@@ -209,7 +228,6 @@ PYTHONPATH=src python -m social_comment_agent.cli \
 
 ## 后续升级
 
-- 增加平台导出模板库：沉淀小红书、B站、抖音、微博、App Store、社群等常见导出字段样例和映射规则。
 - 增加趋势分析：按周/月对比需求主题、负面反馈、Top 问题变化。
 - 增加人工确认后的 Kanban dispatch 流程：从 dry-run 报告中选择要真正创建的任务，避免自动刷屏。
 - 接入产品知识库：把历史 PM 洞察归档成可检索资料，给后续需求评审和 agent 分工复用。

@@ -1,0 +1,21 @@
+{
+  "name": "douyin",
+  "display_name": "抖音",
+  "description": "抖音创作者服务中心或授权导出的评论数据字段提示。",
+  "default_platform": "douyin",
+  "field_aliases": {
+    "text": ["评论内容", "评论", "内容", "text", "content", "comment"],
+    "comment_id": ["评论ID", "cid", "comment_id", "id"],
+    "author": ["用户昵称", "昵称", "nickname", "user", "author"],
+    "post_id": ["视频ID", "作品ID", "aweme_id", "video_id", "post_id"],
+    "created_at": ["评论时间", "发布时间", "create_time", "created_at", "time"],
+    "platform": ["平台", "platform"],
+    "url": ["作品链接", "视频链接", "url"],
+    "likes": ["点赞数", "digg_count", "like_count", "likes"]
+  },
+  "recommended_fields": ["评论内容", "用户昵称", "评论时间", "视频ID", "评论ID", "点赞数"],
+  "notes": [
+    "仅使用创作者后台、官方 API 或用户授权导出的文件。",
+    "不要实现绕登录、绕验证码或规避限流的抓取逻辑。"
+  ]
+}

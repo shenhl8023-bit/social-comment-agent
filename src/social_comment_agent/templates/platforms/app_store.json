@@ -1,0 +1,22 @@
+{
+  "name": "app_store",
+  "display_name": "App Store",
+  "description": "App Store Connect / 应用商店评价导出的用户评论字段提示。",
+  "default_platform": "app_store",
+  "field_aliases": {
+    "text": ["评价内容", "评论内容", "review", "body", "content", "text"],
+    "comment_id": ["评价ID", "review_id", "id"],
+    "author": ["用户昵称", "author", "userName", "user"],
+    "post_id": ["应用ID", "app_id", "bundle_id", "post_id"],
+    "created_at": ["评价时间", "更新时间", "created_at", "updated_at", "date"],
+    "platform": ["平台", "platform"],
+    "rating": ["评分", "rating", "star"],
+    "version": ["版本", "app_version", "version"],
+    "country": ["国家", "地区", "country", "territory"]
+  },
+  "recommended_fields": ["评价内容", "评分", "版本", "评价时间", "评价ID", "国家"],
+  "notes": [
+    "优先使用 App Store Connect 或应用商店后台导出。",
+    "评分、版本、地区字段对定位版本回归和区域问题很有价值。"
+  ]
+}

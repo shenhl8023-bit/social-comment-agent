@@ -1,0 +1,21 @@
+{
+  "name": "xiaohongshu",
+  "display_name": "小红书",
+  "description": "小红书创作者/蒲公英/运营后台授权导出的评论数据字段提示。",
+  "default_platform": "xiaohongshu",
+  "field_aliases": {
+    "text": ["评论内容", "评论", "内容", "comment_content", "content", "text"],
+    "comment_id": ["评论ID", "评论id", "comment_id", "id"],
+    "author": ["用户昵称", "昵称", "作者", "user_name", "nickname", "author"],
+    "post_id": ["笔记ID", "笔记id", "note_id", "noteId", "post_id"],
+    "created_at": ["评论时间", "发布时间", "创建时间", "created_at", "time"],
+    "platform": ["平台", "platform"],
+    "url": ["笔记链接", "链接", "url"],
+    "likes": ["点赞数", "like_count", "likes"]
+  },
+  "recommended_fields": ["评论内容", "用户昵称", "评论时间", "笔记ID", "评论ID", "点赞数"],
+  "notes": [
+    "仅处理账号后台或用户授权导出的评论文件，不绕登录、不绕验证码。",
+    "建议保留笔记ID和评论ID，方便去重与追溯证据。"
+  ]
+}

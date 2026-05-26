@@ -1,0 +1,22 @@
+{
+  "name": "weibo",
+  "display_name": "微博",
+  "description": "微博创作者/企业账号后台或授权导出的评论数据字段提示。",
+  "default_platform": "weibo",
+  "field_aliases": {
+    "text": ["评论内容", "评论", "内容", "text", "content", "comment"],
+    "comment_id": ["评论ID", "mid", "comment_id", "id"],
+    "author": ["用户昵称", "昵称", "screen_name", "user", "author"],
+    "post_id": ["微博ID", "博文ID", "status_id", "post_id"],
+    "created_at": ["评论时间", "发布时间", "created_at", "time"],
+    "platform": ["平台", "platform"],
+    "url": ["微博链接", "链接", "url"],
+    "likes": ["点赞数", "like_count", "likes"],
+    "replies": ["回复数", "reply_count", "replies"]
+  },
+  "recommended_fields": ["评论内容", "用户昵称", "评论时间", "微博ID", "评论ID"],
+  "notes": [
+    "仅处理授权导出或官方接口返回数据。",
+    "公开页面也需遵守平台条款、robots 和限流要求。"
+  ]
+}
