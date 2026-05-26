@@ -64,7 +64,9 @@ PYTHONPATH=src python -m social_comment_agent.watcher \
   --platform demo
 ```
 
-## Hermes Kanban dry-run（可选）
+## Hermes Kanban dry-run / dispatch（可选）
+
+先生成 dry-run，不创建卡片：
 
 ```bash
 PYTHONPATH=src python -m social_comment_agent.cli \
@@ -82,7 +84,24 @@ PYTHONPATH=src python -m social_comment_agent.cli \
 - `out/demo-kanban/kanban_dry_run/kanban_dry_run.md`：可审阅的 `hermes kanban create` 命令
 - `out/demo-kanban/kanban_dry_run/kanban_dry_run.json`：结构化 dry-run 结果
 
-注意：`--dry-run-kanban` 只写命令，不创建卡片。确认无误后再手动执行命令或扩展为真实派发。
+确认无误后，再显式派发到 Hermes Kanban：
+
+```bash
+PYTHONPATH=src python -m social_comment_agent.cli \
+  --input data/raw/sample_comments.jsonl \
+  --out out/demo-kanban-dispatch \
+  --platform demo \
+  --dispatch-kanban \
+  --kanban-workspace scratch \
+  --kanban-tenant social-comment-agent
+```
+
+`--dispatch-kanban` 会实际执行 `hermes kanban create --json` 并额外生成：
+
+- `out/demo-kanban-dispatch/kanban_dispatch/kanban_dispatch.md`：派发审计报告
+- `out/demo-kanban-dispatch/kanban_dispatch/kanban_dispatch.json`：结构化执行结果
+
+注意：默认不会创建 Kanban 卡片；只有显式传入 `--dispatch-kanban` 才会派发。
 
 ## 流程
 
