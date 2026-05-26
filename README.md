@@ -64,6 +64,26 @@ SOCIAL_COMMENT_KANBAN_TENANT=social-comment-agent \
 scripts/demo_realistic.sh data/samples/realistic_product_feedback_30.csv
 ```
 
+## 导入预检
+
+把平台后台、官方 API 或数据工具导出的文件放进 watcher 前，建议先运行导入预检，确认字段是否能被识别。
+
+```bash
+PYTHONPATH=src python -m social_comment_agent.import_wizard \
+  data/samples/realistic_product_feedback_30.csv \
+  --platform authorized_export
+```
+
+输出会包含：
+
+- 文件格式和总行数
+- 可识别评论数、去重后评论数
+- 识别到的 `text/author/created_at/post_id/comment_id/platform` 字段
+- 缺少评论内容、重复评论、缺少平台/ID 等风险提示
+- 是否建议直接放入 `data/inbox/`
+
+当前支持 `.csv/.json/.jsonl`，并兼容常见字段别名，例如 `text/content/comment/body/message/评论/内容/评论内容`。
+
 ## LLM 配置
 
 项目提供 `.env.example` 模板。复制为本地文件后填写真实密钥，真实 `.env*` 文件已被 `.gitignore` 忽略。
@@ -179,15 +199,18 @@ PYTHONPATH=src python -m social_comment_agent.cli \
 
 ## 流程
 
-1. `collector`：读取评论导出并去重。
-2. `analyzer` / `llm_analyzer`：按需求主题聚类或调用 LLM，提取痛点、价值、建议方案和证据评论。
-3. `archiver`：归档产品经理报告。
-4. `task_router`：按产品经理、开发、测试、验收拆分任务。
-5. `watcher`：扫描导出目录，增量生成归档。
-6. `cli`：串联完整流水线。
+1. `import_wizard`：预检授权导出的 `.csv/.json/.jsonl`，确认字段映射、跳过行和重复评论。
+2. `collector`：读取评论导出并去重。
+3. `analyzer` / `llm_analyzer`：按需求主题聚类或调用 LLM，提取痛点、价值、建议方案和证据评论。
+4. `archiver`：归档产品经理报告。
+5. `task_router`：按产品经理、开发、测试、验收拆分任务。
+6. `watcher`：扫描导出目录，增量生成归档。
+7. `cli`：串联完整流水线。
 
 ## 后续升级
 
-- 接入平台 API：新增 collector 适配器，但保留合规授权和限流。
-- 接入 Hermes Kanban：将 `agent_tasks/*.json` 自动写入看板，分配给不同 profile/agent。
-- 定时任务：用 Hermes cron 定期分析导出目录并推送报告给产品经理。
+- 增加平台导出模板库：沉淀小红书、B站、抖音、微博、App Store、社群等常见导出字段样例和映射规则。
+- 增加趋势分析：按周/月对比需求主题、负面反馈、Top 问题变化。
+- 增加人工确认后的 Kanban dispatch 流程：从 dry-run 报告中选择要真正创建的任务，避免自动刷屏。
+- 接入产品知识库：把历史 PM 洞察归档成可检索资料，给后续需求评审和 agent 分工复用。
+- 接入平台 API：新增 collector 适配器，但继续坚持官方 API、授权导出和限流边界。

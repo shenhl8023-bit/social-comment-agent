@@ -8,10 +8,10 @@ from typing import Iterable, Any
 from .models import Comment
 
 
-TEXT_KEYS = ("text", "content", "comment", "评论内容")
+TEXT_KEYS = ("text", "content", "comment", "body", "message", "评论", "内容", "评论内容")
 ID_KEYS = ("comment_id", "id", "评论ID")
 AUTHOR_KEYS = ("author", "user", "nickname", "用户名")
-POST_KEYS = ("post_id", "aweme_id", "note_id", "帖子ID")
+POST_KEYS = ("post_id", "aweme_id", "note_id", "video_id", "帖子ID")
 TIME_KEYS = ("created_at", "time", "date", "发布时间")
 
 
