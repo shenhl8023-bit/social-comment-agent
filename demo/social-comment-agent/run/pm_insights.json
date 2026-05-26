@@ -1,0 +1,497 @@
+{
+  "generated_at": "2026-05-26T16:25:09.977602+00:00",
+  "total_comments": 30,
+  "insights": [
+    {
+      "title": "功能缺口",
+      "problem": "用户明确表达功能缺口或新增能力需求",
+      "user_value": "让产品更贴近真实使用场景",
+      "priority": "P0",
+      "evidence": [
+        {
+          "platform": "bilibili",
+          "post_id": "video-ai-002",
+          "comment_id": "r006",
+          "author": "UP主老王",
+          "text": "能不能支持B站视频评论导入，弹幕也想一起分析",
+          "created_at": "2026-05-25 09:15:00",
+          "metrics": {
+            "likes": 66,
+            "replies": 12
+          },
+          "raw": {
+            "platform": "bilibili",
+            "post_id": "video-ai-002",
+            "comment_id": "r006",
+            "author": "UP主老王",
+            "text": "能不能支持B站视频评论导入，弹幕也想一起分析",
+            "created_at": "2026-05-25 09:15:00",
+            "likes": "66",
+            "replies": "12"
+          }
+        },
+        {
+          "platform": "douyin",
+          "post_id": "video-launch-003",
+          "comment_id": "r011",
+          "author": "短视频运营",
+          "text": "希望按点赞数排序评论，先看高赞差评",
+          "created_at": "2026-05-25 09:25:00",
+          "metrics": {
+            "likes": 73,
+            "replies": 8
+          },
+          "raw": {
+            "platform": "douyin",
+            "post_id": "video-launch-003",
+            "comment_id": "r011",
+            "author": "短视频运营",
+            "text": "希望按点赞数排序评论，先看高赞差评",
+            "created_at": "2026-05-25 09:25:00",
+            "likes": "73",
+            "replies": "8"
+          }
+        },
+        {
+          "platform": "douyin",
+          "post_id": "video-launch-003",
+          "comment_id": "r012",
+          "author": "老板娘",
+          "text": "能不能自动识别哪些评论是购买意向，方便我跟进客户",
+          "created_at": "2026-05-25 09:27:00",
+          "metrics": {
+            "likes": 64,
+            "replies": 10
+          },
+          "raw": {
+            "platform": "douyin",
+            "post_id": "video-launch-003",
+            "comment_id": "r012",
+            "author": "老板娘",
+            "text": "能不能自动识别哪些评论是购买意向，方便我跟进客户",
+            "created_at": "2026-05-25 09:27:00",
+            "likes": "64",
+            "replies": "10"
+          }
+        },
+        {
+          "platform": "appstore",
+          "post_id": "app-review-005",
+          "comment_id": "r024",
+          "author": "用户24",
+          "text": "能不能把任务直接派给开发和测试，不要我复制粘贴",
+          "created_at": "2026-05-25 09:52:00",
+          "metrics": {
+            "likes": 67,
+            "replies": 8
+          },
+          "raw": {
+            "platform": "appstore",
+            "post_id": "app-review-005",
+            "comment_id": "r024",
+            "author": "用户24",
+            "text": "能不能把任务直接派给开发和测试，不要我复制粘贴",
+            "created_at": "2026-05-25 09:52:00",
+            "likes": "67",
+            "replies": "8"
+          }
+        },
+        {
+          "platform": "xiaohongshu",
+          "post_id": "note-growth-001",
+          "comment_id": "r005",
+          "author": "店铺老板",
+          "text": "会员价格有点高，小团队一个月用不了几次，希望有按次付费",
+          "created_at": "2026-05-25 09:12:00",
+          "metrics": {
+            "likes": 51,
+            "replies": 7
+          },
+          "raw": {
+            "platform": "xiaohongshu",
+            "post_id": "note-growth-001",
+            "comment_id": "r005",
+            "author": "店铺老板",
+            "text": "会员价格有点高，小团队一个月用不了几次，希望有按次付费",
+            "created_at": "2026-05-25 09:12:00",
+            "likes": "51",
+            "replies": "7"
+          }
+        }
+      ],
+      "suggested_solution": "梳理高频功能请求并进入需求池评审",
+      "score": 1.7
+    },
+    {
+      "title": "价格与付费",
+      "problem": "用户对价格、会员或退款机制有疑虑",
+      "user_value": "提升付费转化和信任感",
+      "priority": "P1",
+      "evidence": [
+        {
+          "platform": "douyin",
+          "post_id": "video-launch-003",
+          "comment_id": "r015",
+          "author": "张先生",
+          "text": "退款入口找不到，试用后不合适但不知道怎么取消订阅",
+          "created_at": "2026-05-25 09:34:00",
+          "metrics": {
+            "likes": 61,
+            "replies": 11
+          },
+          "raw": {
+            "platform": "douyin",
+            "post_id": "video-launch-003",
+            "comment_id": "r015",
+            "author": "张先生",
+            "text": "退款入口找不到，试用后不合适但不知道怎么取消订阅",
+            "created_at": "2026-05-25 09:34:00",
+            "likes": "61",
+            "replies": "11"
+          }
+        },
+        {
+          "platform": "community",
+          "post_id": "group-feedback-006",
+          "comment_id": "r030",
+          "author": "社群用户E",
+          "text": "如果能看到趋势，比如这周价格抱怨变多了，会更有用",
+          "created_at": "2026-05-25 10:12:00",
+          "metrics": {
+            "likes": 58,
+            "replies": 7
+          },
+          "raw": {
+            "platform": "community",
+            "post_id": "group-feedback-006",
+            "comment_id": "r030",
+            "author": "社群用户E",
+            "text": "如果能看到趋势，比如这周价格抱怨变多了，会更有用",
+            "created_at": "2026-05-25 10:12:00",
+            "likes": "58",
+            "replies": "7"
+          }
+        },
+        {
+          "platform": "xiaohongshu",
+          "post_id": "note-growth-001",
+          "comment_id": "r005",
+          "author": "店铺老板",
+          "text": "会员价格有点高，小团队一个月用不了几次，希望有按次付费",
+          "created_at": "2026-05-25 09:12:00",
+          "metrics": {
+            "likes": 51,
+            "replies": 7
+          },
+          "raw": {
+            "platform": "xiaohongshu",
+            "post_id": "note-growth-001",
+            "comment_id": "r005",
+            "author": "店铺老板",
+            "text": "会员价格有点高，小团队一个月用不了几次，希望有按次付费",
+            "created_at": "2026-05-25 09:12:00",
+            "likes": "51",
+            "replies": "7"
+          }
+        },
+        {
+          "platform": "weibo",
+          "post_id": "post-public-004",
+          "comment_id": "r018",
+          "author": "内容主管",
+          "text": "希望支持关键词过滤，比如只看退款、卡顿、导出相关评论",
+          "created_at": "2026-05-25 09:39:00",
+          "metrics": {
+            "likes": 52,
+            "replies": 6
+          },
+          "raw": {
+            "platform": "weibo",
+            "post_id": "post-public-004",
+            "comment_id": "r018",
+            "author": "内容主管",
+            "text": "希望支持关键词过滤，比如只看退款、卡顿、导出相关评论",
+            "created_at": "2026-05-25 09:39:00",
+            "likes": "52",
+            "replies": "6"
+          }
+        },
+        {
+          "platform": "douyin",
+          "post_id": "video-launch-003",
+          "comment_id": "r013",
+          "author": "PM实习生",
+          "text": "报告里面最好区分Bug、功能建议、价格抱怨和客服问题",
+          "created_at": "2026-05-25 09:30:00",
+          "metrics": {
+            "likes": 48,
+            "replies": 5
+          },
+          "raw": {
+            "platform": "douyin",
+            "post_id": "video-launch-003",
+            "comment_id": "r013",
+            "author": "PM实习生",
+            "text": "报告里面最好区分Bug、功能建议、价格抱怨和客服问题",
+            "created_at": "2026-05-25 09:30:00",
+            "likes": "48",
+            "replies": "5"
+          }
+        }
+      ],
+      "suggested_solution": "优化套餐说明、退款入口和价格权益展示",
+      "score": 0.74
+    },
+    {
+      "title": "性能与稳定性",
+      "problem": "用户遇到性能或稳定性问题",
+      "user_value": "减少流失并提升核心流程完成率",
+      "priority": "P1",
+      "evidence": [
+        {
+          "platform": "bilibili",
+          "post_id": "video-ai-002",
+          "comment_id": "r010",
+          "author": "北方用户",
+          "text": "客服回复太慢了，充值后模型额度没到账没人处理",
+          "created_at": "2026-05-25 09:23:00",
+          "metrics": {
+            "likes": 57,
+            "replies": 9
+          },
+          "raw": {
+            "platform": "bilibili",
+            "post_id": "video-ai-002",
+            "comment_id": "r010",
+            "author": "北方用户",
+            "text": "客服回复太慢了，充值后模型额度没到账没人处理",
+            "created_at": "2026-05-25 09:23:00",
+            "likes": "57",
+            "replies": "9"
+          }
+        },
+        {
+          "platform": "weibo",
+          "post_id": "post-public-004",
+          "comment_id": "r018",
+          "author": "内容主管",
+          "text": "希望支持关键词过滤，比如只看退款、卡顿、导出相关评论",
+          "created_at": "2026-05-25 09:39:00",
+          "metrics": {
+            "likes": 52,
+            "replies": 6
+          },
+          "raw": {
+            "platform": "weibo",
+            "post_id": "post-public-004",
+            "comment_id": "r018",
+            "author": "内容主管",
+            "text": "希望支持关键词过滤，比如只看退款、卡顿、导出相关评论",
+            "created_at": "2026-05-25 09:39:00",
+            "likes": "52",
+            "replies": "6"
+          }
+        },
+        {
+          "platform": "bilibili",
+          "post_id": "video-ai-002",
+          "comment_id": "r008",
+          "author": "测试小陈",
+          "text": "大文件导入时页面卡死，刷新后任务也找不到了",
+          "created_at": "2026-05-25 09:18:00",
+          "metrics": {
+            "likes": 38,
+            "replies": 6
+          },
+          "raw": {
+            "platform": "bilibili",
+            "post_id": "video-ai-002",
+            "comment_id": "r008",
+            "author": "测试小陈",
+            "text": "大文件导入时页面卡死，刷新后任务也找不到了",
+            "created_at": "2026-05-25 09:18:00",
+            "likes": "38",
+            "replies": "6"
+          }
+        },
+        {
+          "platform": "appstore",
+          "post_id": "app-review-005",
+          "comment_id": "r021",
+          "author": "用户21",
+          "text": "更新后闪退，打开评论导入页面就退出",
+          "created_at": "2026-05-25 09:46:00",
+          "metrics": {
+            "likes": 26,
+            "replies": 2
+          },
+          "raw": {
+            "platform": "appstore",
+            "post_id": "app-review-005",
+            "comment_id": "r021",
+            "author": "用户21",
+            "text": "更新后闪退，打开评论导入页面就退出",
+            "created_at": "2026-05-25 09:46:00",
+            "likes": "26",
+            "replies": "2"
+          }
+        },
+        {
+          "platform": "xiaohongshu",
+          "post_id": "note-growth-001",
+          "comment_id": "r004",
+          "author": "增长同学",
+          "text": "加载报告太慢了，二百条评论等了快一分钟",
+          "created_at": "2026-05-25 09:08:00",
+          "metrics": {
+            "likes": 21,
+            "replies": 3
+          },
+          "raw": {
+            "platform": "xiaohongshu",
+            "post_id": "note-growth-001",
+            "comment_id": "r004",
+            "author": "增长同学",
+            "text": "加载报告太慢了，二百条评论等了快一分钟",
+            "created_at": "2026-05-25 09:08:00",
+            "likes": "21",
+            "replies": "3"
+          }
+        }
+      ],
+      "suggested_solution": "建立性能监控、优化关键路径并补充异常恢复",
+      "score": 0.58
+    },
+    {
+      "title": "易用性",
+      "problem": "用户在理解或操作路径上受阻",
+      "user_value": "降低新手门槛并减少客服压力",
+      "priority": "P1",
+      "evidence": [
+        {
+          "platform": "douyin",
+          "post_id": "video-launch-003",
+          "comment_id": "r015",
+          "author": "张先生",
+          "text": "退款入口找不到，试用后不合适但不知道怎么取消订阅",
+          "created_at": "2026-05-25 09:34:00",
+          "metrics": {
+            "likes": 61,
+            "replies": 11
+          },
+          "raw": {
+            "platform": "douyin",
+            "post_id": "video-launch-003",
+            "comment_id": "r015",
+            "author": "张先生",
+            "text": "退款入口找不到，试用后不合适但不知道怎么取消订阅",
+            "created_at": "2026-05-25 09:34:00",
+            "likes": "61",
+            "replies": "11"
+          }
+        },
+        {
+          "platform": "bilibili",
+          "post_id": "video-ai-002",
+          "comment_id": "r008",
+          "author": "测试小陈",
+          "text": "大文件导入时页面卡死，刷新后任务也找不到了",
+          "created_at": "2026-05-25 09:18:00",
+          "metrics": {
+            "likes": 38,
+            "replies": 6
+          },
+          "raw": {
+            "platform": "bilibili",
+            "post_id": "video-ai-002",
+            "comment_id": "r008",
+            "author": "测试小陈",
+            "text": "大文件导入时页面卡死，刷新后任务也找不到了",
+            "created_at": "2026-05-25 09:18:00",
+            "likes": "38",
+            "replies": "6"
+          }
+        },
+        {
+          "platform": "xiaohongshu",
+          "post_id": "note-growth-001",
+          "comment_id": "r001",
+          "author": "小白运营",
+          "text": "第一次用不知道从哪里导入评论，入口藏得太深了，找了十分钟",
+          "created_at": "2026-05-25 09:01:00",
+          "metrics": {
+            "likes": 18,
+            "replies": 2
+          },
+          "raw": {
+            "platform": "xiaohongshu",
+            "post_id": "note-growth-001",
+            "comment_id": "r001",
+            "author": "小白运营",
+            "text": "第一次用不知道从哪里导入评论，入口藏得太深了，找了十分钟",
+            "created_at": "2026-05-25 09:01:00",
+            "likes": "18",
+            "replies": "2"
+          }
+        }
+      ],
+      "suggested_solution": "简化入口、增加引导和关键步骤提示",
+      "score": 0.36
+    },
+    {
+      "title": "客服与信任",
+      "problem": "用户对服务响应和可信度有担忧",
+      "user_value": "恢复用户信任并减少负面传播",
+      "priority": "P1",
+      "evidence": [
+        {
+          "platform": "bilibili",
+          "post_id": "video-ai-002",
+          "comment_id": "r010",
+          "author": "北方用户",
+          "text": "客服回复太慢了，充值后模型额度没到账没人处理",
+          "created_at": "2026-05-25 09:23:00",
+          "metrics": {
+            "likes": 57,
+            "replies": 9
+          },
+          "raw": {
+            "platform": "bilibili",
+            "post_id": "video-ai-002",
+            "comment_id": "r010",
+            "author": "北方用户",
+            "text": "客服回复太慢了，充值后模型额度没到账没人处理",
+            "created_at": "2026-05-25 09:23:00",
+            "likes": "57",
+            "replies": "9"
+          }
+        },
+        {
+          "platform": "douyin",
+          "post_id": "video-launch-003",
+          "comment_id": "r013",
+          "author": "PM实习生",
+          "text": "报告里面最好区分Bug、功能建议、价格抱怨和客服问题",
+          "created_at": "2026-05-25 09:30:00",
+          "metrics": {
+            "likes": 48,
+            "replies": 5
+          },
+          "raw": {
+            "platform": "douyin",
+            "post_id": "video-launch-003",
+            "comment_id": "r013",
+            "author": "PM实习生",
+            "text": "报告里面最好区分Bug、功能建议、价格抱怨和客服问题",
+            "created_at": "2026-05-25 09:30:00",
+            "likes": "48",
+            "replies": "5"
+          }
+        }
+      ],
+      "suggested_solution": "建立客服 SLA、工单追踪和透明状态反馈",
+      "score": 0.29
+    }
+  ],
+  "summary": "共分析 30 条评论，主要需求集中在：功能缺口、价格与付费、性能与稳定性。建议产品经理优先评审 P0/P1 主题。"
+}

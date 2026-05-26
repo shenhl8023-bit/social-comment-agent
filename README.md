@@ -131,7 +131,8 @@ PYTHONPATH=src python -m social_comment_agent.watcher \
   --trend-bucket week \
   --dry-run-kanban \
   --kanban-workspace scratch \
-  --kanban-tenant social-comment-agent
+  --kanban-tenant social-comment-agent \
+  --knowledge-base knowledge_base
 ```
 
 watcher 的 Kanban 行为和一次性 CLI 一样安全：
@@ -140,6 +141,7 @@ watcher 的 Kanban 行为和一次性 CLI 一样安全：
 - `--dispatch-kanban`：显式创建 Kanban 卡片，并生成 `kanban_dispatch/kanban_dispatch.md|json` 审计报告。
 - 不传这两个参数时，只生成 PM 洞察和 agent task 文件。
 - `--trend --trend-bucket week|month`：在每个归档目录下额外生成 `trends/trend_report.md|json`，摘要里会附带当前周期、升温/降温主题和趋势报告路径。
+- `--knowledge-base knowledge_base`：扫描归档目录内的历史 `pm_insights.json`，生成可检索的 PM 洞察知识库 `knowledge_base/knowledge_base.md|json`，摘要里会附带知识库路径。
 
 ### Hermes cron 准生产运行
 
@@ -151,6 +153,7 @@ watcher 的 Kanban 行为和一次性 CLI 一样安全：
 - 分析器：`rules`
 - Kanban 模式：`dry-run`
 - 趋势分析：默认关闭；设置 `SOCIAL_COMMENT_AGENT_TREND_MODE=week` 或 `month` 后开启
+- 知识库：默认关闭；设置 `SOCIAL_COMMENT_AGENT_KNOWLEDGE_BASE=/mnt/d/CodeProj/social-comment-agent/knowledge_base` 后生成历史 PM 洞察索引
 - Kanban workspace：`/mnt/d/CodeProj/social-comment-agent`
 - Kanban tenant：`social-comment-agent`
 
@@ -178,9 +181,41 @@ cp data/samples/realistic_product_feedback_30.csv data/inbox/realistic_product_f
 SOCIAL_COMMENT_AGENT_KANBAN_MODE=none ~/.hermes/scripts/social_comment_agent_watch.sh
 SOCIAL_COMMENT_AGENT_ANALYZER=llm ~/.hermes/scripts/social_comment_agent_watch.sh
 SOCIAL_COMMENT_AGENT_TREND_MODE=week ~/.hermes/scripts/social_comment_agent_watch.sh
+SOCIAL_COMMENT_AGENT_KNOWLEDGE_BASE=/mnt/d/CodeProj/social-comment-agent/knowledge_base ~/.hermes/scripts/social_comment_agent_watch.sh
 ```
 
-注意：cron 默认只做 dry-run；只有显式设置 `SOCIAL_COMMENT_AGENT_KANBAN_MODE=dispatch` 才会真实创建 Kanban 卡片。趋势分析默认关闭，避免没有时间字段的普通导出产生额外噪声；需要周/月趋势时显式设置 `SOCIAL_COMMENT_AGENT_TREND_MODE`。
+注意：cron 默认只做 dry-run；只有显式设置 `SOCIAL_COMMENT_AGENT_KANBAN_MODE=dispatch` 才会真实创建 Kanban 卡片。趋势分析和知识库默认关闭，避免普通导出产生额外噪声；需要周/月趋势或历史洞察检索时显式设置对应环境变量。
+
+## PM 洞察知识库
+
+知识库会从历史归档中的 `pm_insights.json` 提取洞察标题、优先级、问题、用户价值、建议方案和证据评论，生成本地 Markdown/JSON 索引，便于后续需求评审和子 agent 分工复用。
+
+一次性 CLI 生成：
+
+```bash
+PYTHONPATH=src python -m social_comment_agent.cli \
+  --input data/raw/sample_comments.jsonl \
+  --out archive/manual-run \
+  --platform demo \
+  --knowledge-base knowledge_base
+```
+
+也可以在 watcher 扫描时传入 `--knowledge-base knowledge_base`，每次处理新文件后自动重建索引。
+
+输出：
+
+- `knowledge_base/knowledge_base.md`：PM 可读历史洞察索引
+- `knowledge_base/knowledge_base.json`：结构化检索索引；代码内可用 `search_knowledge_base(path, query)` 做关键词检索
+
+CLI 检索历史洞察：
+
+```bash
+PYTHONPATH=src python -m social_comment_agent.cli knowledge-base search "导出 报表" \
+  --index knowledge_base/knowledge_base.json \
+  --limit 5
+```
+
+输出会按优先级和关键词匹配数排序，包含标题、优先级、匹配词、问题/建议、证据评论和来源报告路径。
 
 ## Hermes Kanban dry-run / dispatch（可选）
 
@@ -245,6 +280,22 @@ PYTHONPATH=src python -m social_comment_agent.trends \
 - `out/trends-weekly/trend_report.json`：结构化趋势数据，便于后续进入日报/周报或 Kanban
 
 样例数据：`data/samples/historical_product_feedback_2weeks.csv` 是两周授权导出风格评论，用于验证趋势链路。
+
+## 准生产运行
+
+详细操作手册见 `docs/operations.md`，覆盖 inbox 目录约定、Hermes cron、环境变量、输出查看、知识库检索和排障。
+
+## 可交付 demo 包
+
+项目保留了一组可提交的端到端演示产物：`demo/social-comment-agent/`。
+
+核心文件：
+
+- `demo/social-comment-agent/sample_input.csv`：授权导出风格评论样本
+- `demo/social-comment-agent/sample_pm_insights.md`：PM 洞察报告样例
+- `demo/social-comment-agent/sample_agent_tasks.md`：子 Agent 任务拆分样例
+- `demo/social-comment-agent/sample_kanban_dry_run.md`：Kanban dry-run 命令样例
+- `demo/social-comment-agent/sample_knowledge_base.md`：历史 PM 洞察知识库样例
 
 ## 流程
 

@@ -1,4 +1,4 @@
-from social_comment_agent.models import AnalysisReport, Comment, Insight
+from social_comment_agent.models import AnalysisReport, Comment
 
 
 def test_comment_normalized_text():

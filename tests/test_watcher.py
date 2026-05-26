@@ -28,6 +28,7 @@ def test_watcher_processes_new_file_once(tmp_path):
         kanban_tenant="demo-tenant",
         trend=True,
         trend_bucket="week",
+        knowledge_base_dir=tmp_path / "kb",
     )
     second = scan_once(
         inbox,
@@ -45,6 +46,8 @@ def test_watcher_processes_new_file_once(tmp_path):
     assert first[0]["kanban_dry_run"].endswith("kanban_dry_run.md")
     assert first[0]["trend_markdown"].endswith("trend_report.md")
     assert first[0]["trend_json"].endswith("trend_report.json")
+    assert first[0]["knowledge_base_markdown"].endswith("knowledge_base.md")
+    assert first[0]["knowledge_base_json"].endswith("knowledge_base.json")
     assert "kanban_dispatch" not in first[0]
     assert len(second) == 0
     assert state.exists()
@@ -110,6 +113,7 @@ def test_format_processed_summary_is_telegram_friendly(tmp_path):
             "trend_markdown": str(trend_markdown),
             "trend_json": str(archive / "trend_report.json"),
             "kanban_dry_run": str(archive / "kanban_dry_run" / "kanban_dry_run.md"),
+            "knowledge_base_markdown": str(archive / "kb" / "knowledge_base.md"),
         }
     ])
 
@@ -125,5 +129,7 @@ def test_format_processed_summary_is_telegram_friendly(tmp_path):
     assert "性能与稳定性（P1" in summary
     assert str(trend_markdown) in summary
     assert "Kanban dry-run" in summary
+    assert "知识库：" in summary
+    assert str(archive / "kb" / "knowledge_base.md") in summary
     assert str(markdown) in summary
     assert '"processed"' not in summary

@@ -4,7 +4,7 @@ import json
 from dataclasses import asdict
 from pathlib import Path
 
-from .models import AnalysisReport, Insight
+from .models import AnalysisReport
 
 
 def report_to_markdown(report: AnalysisReport) -> str:

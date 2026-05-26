@@ -12,8 +12,9 @@ PLATFORM="${SOCIAL_COMMENT_AGENT_PLATFORM:-unknown}"
 ANALYZER="${SOCIAL_COMMENT_AGENT_ANALYZER:-rules}"
 KANBAN_WORKSPACE="${SOCIAL_COMMENT_AGENT_KANBAN_WORKSPACE:-scratch}"
 KANBAN_TENANT="${SOCIAL_COMMENT_AGENT_KANBAN_TENANT:-social-comment-agent}"
-KANBAN_MODE="${SOCIAL_COMMENT_AGENT_KANBAN_MODE:-none}" # none | dry-run | dispatch
+KANBAN_MODE="${SOCIAL_COMMENT_AGENT_KANBAN_MODE:-dry-run}" # none | dry-run | dispatch
 TREND_MODE="${SOCIAL_COMMENT_AGENT_TREND_MODE:-none}" # none | week | month
+KNOWLEDGE_BASE="${SOCIAL_COMMENT_AGENT_KNOWLEDGE_BASE:-}"
 
 mkdir -p "$INBOX"
 
@@ -53,6 +54,10 @@ case "$TREND_MODE" in
     exit 2
     ;;
 esac
+
+if [[ -n "$KNOWLEDGE_BASE" ]]; then
+  args+=(--knowledge-base "$KNOWLEDGE_BASE")
+fi
 
 cd "$ROOT"
 PYTHONPATH=src python -m social_comment_agent.watcher "${args[@]}"

@@ -8,6 +8,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 from .cli import run_pipeline
+from .knowledge_base import build_knowledge_base
 from .trends import run_trend_pipeline
 
 SUPPORTED_SUFFIXES = {".jsonl", ".json", ".csv"}
@@ -108,6 +109,8 @@ def format_processed_summary(processed: list[dict[str, str]]) -> str:
             lines.extend(["", f"Kanban dry-run：{item['kanban_dry_run']}"])
         if item.get("kanban_dispatch"):
             lines.append(f"Kanban dispatch：{item['kanban_dispatch']}")
+        if item.get("knowledge_base_markdown"):
+            lines.append(f"知识库：{item['knowledge_base_markdown']}")
         if item.get("markdown"):
             lines.extend(["", f"完整报告：{item['markdown']}"])
         lines.append("")
@@ -126,6 +129,7 @@ def scan_once(
     kanban_tenant: str | None = None,
     trend: bool = False,
     trend_bucket: str = "week",
+    knowledge_base_dir: str | Path | None = None,
 ) -> list[dict[str, str]]:
     inbox_path = Path(inbox)
     archive_path = Path(archive_dir)
@@ -168,6 +172,11 @@ def scan_once(
         if "kanban_dispatch_markdown" in paths:
             item["kanban_dispatch"] = str(paths["kanban_dispatch_markdown"])
         processed.append(item)
+    if processed and knowledge_base_dir:
+        kb_paths = build_knowledge_base(archive_path, knowledge_base_dir)
+        for item in processed:
+            item["knowledge_base_json"] = str(kb_paths["index_json"])
+            item["knowledge_base_markdown"] = str(kb_paths["index_markdown"])
     if processed:
         save_state(state_file, state)
     return processed
@@ -186,6 +195,7 @@ def main() -> None:
     parser.add_argument("--kanban-tenant", default=None, help="Optional Kanban tenant namespace")
     parser.add_argument("--trend", action="store_true", help="Also write a week/month trend report for each processed export")
     parser.add_argument("--trend-bucket", choices=("week", "month"), default="week", help="Trend aggregation bucket")
+    parser.add_argument("--knowledge-base", help="Build/update a local PM insight knowledge base directory")
     args = parser.parse_args()
     processed = scan_once(
         args.inbox,
@@ -199,6 +209,7 @@ def main() -> None:
         kanban_tenant=args.kanban_tenant,
         trend=args.trend,
         trend_bucket=args.trend_bucket,
+        knowledge_base_dir=args.knowledge_base,
     )
     summary = format_processed_summary(processed)
     if summary:

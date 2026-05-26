@@ -4,6 +4,7 @@ import json
 import os
 import re
 import urllib.error
+import urllib.parse
 import urllib.request
 from dataclasses import dataclass
 from typing import Any
@@ -31,6 +32,9 @@ class LLMConfig:
         if not endpoint or not api_key:
             return None
         endpoint = endpoint.rstrip("/")
+        parsed = urllib.parse.urlparse(endpoint)
+        if parsed.scheme not in {"http", "https"} or not parsed.netloc:
+            return None
         if not endpoint.endswith("/chat/completions"):
             endpoint = f"{endpoint}/chat/completions"
         return cls(endpoint=endpoint, api_key=api_key, model=model)
@@ -54,7 +58,8 @@ class LLMAnalyzer:
             return self.fallback.analyze(comments, top_n=top_n)
 
     def _call_llm(self, comments: list[Comment], top_n: int) -> list[Insight]:
-        assert self.config is not None
+        if self.config is None:
+            raise RuntimeError("LLM config is required before calling the LLM analyzer")
         payload = {
             "model": self.config.model,
             "temperature": 0.2,
@@ -74,7 +79,7 @@ class LLMAnalyzer:
             method="POST",
         )
         try:
-            with urllib.request.urlopen(request, timeout=self.config.timeout_seconds) as response:
+            with urllib.request.urlopen(request, timeout=self.config.timeout_seconds) as response:  # nosec B310
                 data = json.loads(response.read().decode("utf-8"))
         except urllib.error.HTTPError as exc:
             body = exc.read().decode("utf-8", errors="replace")
