@@ -7,6 +7,17 @@ from pathlib import Path
 from .models import AgentTask, AnalysisReport, Insight
 
 
+def _flatten_tasks_by_agent(paths: dict[str, Path]) -> list[AgentTask]:
+    tasks: list[AgentTask] = []
+    for agent in AGENT_DEFINITIONS:
+        path = paths.get(agent)
+        if not path:
+            continue
+        raw = json.loads(path.read_text(encoding="utf-8"))
+        tasks.extend(AgentTask(**item) for item in raw)
+    return tasks
+
+
 AGENT_DEFINITIONS = {
     "product_manager": "提炼需求、确定范围、输出 PRD 与优先级",
     "developer": "按 PRD 设计技术方案并实现最小可用功能",
@@ -44,6 +55,13 @@ def write_agent_tasks(report: AnalysisReport, out_dir: str | Path) -> dict[str, 
     md = tasks_dir / "dispatch_summary.md"
     md.write_text(_dispatch_markdown(grouped), encoding="utf-8")
     paths["summary"] = md
+
+    kanban_tasks = out / "kanban_tasks.json"
+    kanban_tasks.write_text(
+        json.dumps([asdict(task) for task in _flatten_tasks_by_agent(paths)], ensure_ascii=False, indent=2),
+        encoding="utf-8",
+    )
+    paths["tasks_json"] = kanban_tasks
     return paths
 
 

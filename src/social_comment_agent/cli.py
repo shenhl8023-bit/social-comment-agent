@@ -8,6 +8,7 @@ from .archiver import archive_report
 from .collector import dedupe_comments, load_comments
 from .llm_analyzer import LLMAnalyzer
 from .task_router import write_agent_tasks
+from .kanban import write_kanban_dry_run
 
 
 def run_pipeline(
@@ -15,12 +16,25 @@ def run_pipeline(
     out_dir: str | Path,
     platform: str = "unknown",
     analyzer_mode: str = "rules",
+    dry_run_kanban: bool = False,
+    kanban_workspace: str = "scratch",
+    kanban_tenant: str | None = None,
 ) -> dict[str, Path]:
     comments = dedupe_comments(load_comments(input_path, platform=platform))
     analyzer = LLMAnalyzer() if analyzer_mode == "llm" else DemandAnalyzer()
     report = analyzer.analyze(comments)
     paths = archive_report(report, out_dir)
     paths.update(write_agent_tasks(report, out_dir))
+    if dry_run_kanban:
+        paths.update({
+            f"kanban_dry_run_{key}": value
+            for key, value in write_kanban_dry_run(
+                paths["tasks_json"],
+                Path(out_dir) / "kanban_dry_run",
+                workspace=kanban_workspace,
+                tenant=kanban_tenant,
+            ).items()
+        })
     return paths
 
 
@@ -35,8 +49,19 @@ def main() -> None:
         default="rules",
         help="Analyzer mode. llm uses OpenAI-compatible env vars and falls back to rules.",
     )
+    parser.add_argument("--dry-run-kanban", action="store_true", help="Write Hermes Kanban create commands without executing them")
+    parser.add_argument("--kanban-workspace", default="scratch", help="Kanban workspace for dry-run commands")
+    parser.add_argument("--kanban-tenant", default=None, help="Optional Kanban tenant namespace")
     args = parser.parse_args()
-    paths = run_pipeline(args.input, args.out, platform=args.platform, analyzer_mode=args.analyzer)
+    paths = run_pipeline(
+        args.input,
+        args.out,
+        platform=args.platform,
+        analyzer_mode=args.analyzer,
+        dry_run_kanban=args.dry_run_kanban,
+        kanban_workspace=args.kanban_workspace,
+        kanban_tenant=args.kanban_tenant,
+    )
     print("完成：")
     for name, path in paths.items():
         print(f"- {name}: {path}")

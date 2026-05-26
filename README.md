@@ -64,6 +64,26 @@ PYTHONPATH=src python -m social_comment_agent.watcher \
   --platform demo
 ```
 
+## Hermes Kanban dry-run（可选）
+
+```bash
+PYTHONPATH=src python -m social_comment_agent.cli \
+  --input data/raw/sample_comments.jsonl \
+  --out out/demo-kanban \
+  --platform demo \
+  --dry-run-kanban \
+  --kanban-workspace scratch \
+  --kanban-tenant social-comment-agent
+```
+
+会生成：
+
+- `out/demo-kanban/kanban_tasks.json`：跨角色任务清单
+- `out/demo-kanban/kanban_dry_run/kanban_dry_run.md`：可审阅的 `hermes kanban create` 命令
+- `out/demo-kanban/kanban_dry_run/kanban_dry_run.json`：结构化 dry-run 结果
+
+注意：`--dry-run-kanban` 只写命令，不创建卡片。确认无误后再手动执行命令或扩展为真实派发。
+
 ## 流程
 
 1. `collector`：读取评论导出并去重。
