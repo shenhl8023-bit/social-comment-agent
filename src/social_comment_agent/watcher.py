@@ -8,6 +8,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 from .cli import run_pipeline
+from .trends import run_trend_pipeline
 
 SUPPORTED_SUFFIXES = {".jsonl", ".json", ".csv"}
 
@@ -49,6 +50,25 @@ def _extract_report_snippets(markdown_path: str | Path, max_insights: int = 5) -
     }
 
 
+def _extract_trend_snippets(markdown_path: str | Path, max_themes: int = 5) -> dict[str, object]:
+    path = Path(markdown_path)
+    if not path.exists():
+        return {"period": "", "summary": "", "themes": []}
+
+    text = path.read_text(encoding="utf-8")
+    period_match = re.search(r"^当前周期：.+$", text, flags=re.MULTILINE)
+    summary_match = re.search(r"## 摘要\s+(.+?)(?:\n## |\Z)", text, flags=re.DOTALL)
+    theme_matches = re.findall(r"^## \d+\.\s+(.+)$", text, flags=re.MULTILINE)
+    summary = ""
+    if summary_match:
+        summary = " ".join(summary_match.group(1).strip().split())
+    return {
+        "period": period_match.group(0) if period_match else "",
+        "summary": summary,
+        "themes": theme_matches[:max_themes],
+    }
+
+
 def format_processed_summary(processed: list[dict[str, str]]) -> str:
     if not processed:
         return ""
@@ -71,6 +91,19 @@ def format_processed_summary(processed: list[dict[str, str]]) -> str:
         if isinstance(insights, list) and insights:
             lines.extend(["", "Top 需求："])
             lines.extend(f"- {insight}" for insight in insights)
+        if item.get("trend_markdown"):
+            trend = _extract_trend_snippets(item["trend_markdown"])
+            trend_period = trend["period"]
+            trend_summary = trend["summary"]
+            trend_themes = trend["themes"]
+            lines.extend(["", "趋势："])
+            if trend_period:
+                lines.append(str(trend_period))
+            if trend_summary:
+                lines.append(str(trend_summary))
+            if isinstance(trend_themes, list) and trend_themes:
+                lines.extend(f"- {theme}" for theme in trend_themes)
+            lines.append(f"趋势报告：{item['trend_markdown']}")
         if item.get("kanban_dry_run"):
             lines.extend(["", f"Kanban dry-run：{item['kanban_dry_run']}"])
         if item.get("kanban_dispatch"):
@@ -91,6 +124,8 @@ def scan_once(
     dispatch_kanban: bool = False,
     kanban_workspace: str = "scratch",
     kanban_tenant: str | None = None,
+    trend: bool = False,
+    trend_bucket: str = "week",
 ) -> list[dict[str, str]]:
     inbox_path = Path(inbox)
     archive_path = Path(archive_dir)
@@ -124,6 +159,10 @@ def scan_once(
             "markdown": str(paths["markdown"]),
             "json": str(paths["json"]),
         }
+        if trend:
+            trend_paths = run_trend_pipeline(input_file, run_dir / "trends", platform=platform, bucket=trend_bucket)
+            item["trend_markdown"] = str(trend_paths["trend_markdown"])
+            item["trend_json"] = str(trend_paths["trend_json"])
         if "kanban_dry_run_markdown" in paths:
             item["kanban_dry_run"] = str(paths["kanban_dry_run_markdown"])
         if "kanban_dispatch_markdown" in paths:
@@ -145,6 +184,8 @@ def main() -> None:
     parser.add_argument("--dispatch-kanban", action="store_true", help="Actually create Hermes Kanban cards for each processed export")
     parser.add_argument("--kanban-workspace", default="scratch", help="Kanban workspace for dry-run/dispatch commands")
     parser.add_argument("--kanban-tenant", default=None, help="Optional Kanban tenant namespace")
+    parser.add_argument("--trend", action="store_true", help="Also write a week/month trend report for each processed export")
+    parser.add_argument("--trend-bucket", choices=("week", "month"), default="week", help="Trend aggregation bucket")
     args = parser.parse_args()
     processed = scan_once(
         args.inbox,
@@ -156,6 +197,8 @@ def main() -> None:
         dispatch_kanban=args.dispatch_kanban,
         kanban_workspace=args.kanban_workspace,
         kanban_tenant=args.kanban_tenant,
+        trend=args.trend,
+        trend_bucket=args.trend_bucket,
     )
     summary = format_processed_summary(processed)
     if summary:

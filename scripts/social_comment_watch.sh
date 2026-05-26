@@ -13,6 +13,7 @@ ANALYZER="${SOCIAL_COMMENT_AGENT_ANALYZER:-rules}"
 KANBAN_WORKSPACE="${SOCIAL_COMMENT_AGENT_KANBAN_WORKSPACE:-scratch}"
 KANBAN_TENANT="${SOCIAL_COMMENT_AGENT_KANBAN_TENANT:-social-comment-agent}"
 KANBAN_MODE="${SOCIAL_COMMENT_AGENT_KANBAN_MODE:-none}" # none | dry-run | dispatch
+TREND_MODE="${SOCIAL_COMMENT_AGENT_TREND_MODE:-none}" # none | week | month
 
 mkdir -p "$INBOX"
 
@@ -37,6 +38,18 @@ case "$KANBAN_MODE" in
     ;;
   *)
     echo "Invalid SOCIAL_COMMENT_AGENT_KANBAN_MODE: $KANBAN_MODE" >&2
+    exit 2
+    ;;
+esac
+
+case "$TREND_MODE" in
+  none)
+    ;;
+  week|month)
+    args+=(--trend --trend-bucket "$TREND_MODE")
+    ;;
+  *)
+    echo "Invalid SOCIAL_COMMENT_AGENT_TREND_MODE: $TREND_MODE" >&2
     exit 2
     ;;
 esac

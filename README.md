@@ -127,6 +127,8 @@ PYTHONPATH=src python -m social_comment_agent.watcher \
   --archive archive \
   --state .social_comment_watch_state.json \
   --platform demo \
+  --trend \
+  --trend-bucket week \
   --dry-run-kanban \
   --kanban-workspace scratch \
   --kanban-tenant social-comment-agent
@@ -137,6 +139,7 @@ watcher 的 Kanban 行为和一次性 CLI 一样安全：
 - `--dry-run-kanban`：只在每个归档目录下生成 `kanban_dry_run/kanban_dry_run.md|json`，不会创建卡片。
 - `--dispatch-kanban`：显式创建 Kanban 卡片，并生成 `kanban_dispatch/kanban_dispatch.md|json` 审计报告。
 - 不传这两个参数时，只生成 PM 洞察和 agent task 文件。
+- `--trend --trend-bucket week|month`：在每个归档目录下额外生成 `trends/trend_report.md|json`，摘要里会附带当前周期、升温/降温主题和趋势报告路径。
 
 ### Hermes cron 准生产运行
 
@@ -147,6 +150,7 @@ watcher 的 Kanban 行为和一次性 CLI 一样安全：
 - 状态文件：`/mnt/d/CodeProj/social-comment-agent/.social_comment_watch_state.json`
 - 分析器：`rules`
 - Kanban 模式：`dry-run`
+- 趋势分析：默认关闭；设置 `SOCIAL_COMMENT_AGENT_TREND_MODE=week` 或 `month` 后开启
 - Kanban workspace：`/mnt/d/CodeProj/social-comment-agent`
 - Kanban tenant：`social-comment-agent`
 
@@ -173,9 +177,10 @@ cp data/samples/realistic_product_feedback_30.csv data/inbox/realistic_product_f
 ```bash
 SOCIAL_COMMENT_AGENT_KANBAN_MODE=none ~/.hermes/scripts/social_comment_agent_watch.sh
 SOCIAL_COMMENT_AGENT_ANALYZER=llm ~/.hermes/scripts/social_comment_agent_watch.sh
+SOCIAL_COMMENT_AGENT_TREND_MODE=week ~/.hermes/scripts/social_comment_agent_watch.sh
 ```
 
-注意：cron 默认只做 dry-run；只有显式设置 `SOCIAL_COMMENT_AGENT_KANBAN_MODE=dispatch` 才会真实创建 Kanban 卡片。
+注意：cron 默认只做 dry-run；只有显式设置 `SOCIAL_COMMENT_AGENT_KANBAN_MODE=dispatch` 才会真实创建 Kanban 卡片。趋势分析默认关闭，避免没有时间字段的普通导出产生额外噪声；需要周/月趋势时显式设置 `SOCIAL_COMMENT_AGENT_TREND_MODE`。
 
 ## Hermes Kanban dry-run / dispatch（可选）
 
