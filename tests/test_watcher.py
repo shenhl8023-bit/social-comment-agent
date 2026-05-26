@@ -13,11 +13,13 @@ def test_watcher_processes_new_file_once(tmp_path):
         encoding="utf-8",
     )
 
-    first = scan_once(inbox, archive, state, platform="demo")
-    second = scan_once(inbox, archive, state, platform="demo")
+    first = scan_once(inbox, archive, state, platform="demo", dry_run_kanban=True, kanban_tenant="demo-tenant")
+    second = scan_once(inbox, archive, state, platform="demo", dry_run_kanban=True, kanban_tenant="demo-tenant")
 
     assert len(first) == 1
     assert first[0]["markdown"]
+    assert first[0]["kanban_dry_run"].endswith("kanban_dry_run.md")
+    assert "kanban_dispatch" not in first[0]
     assert len(second) == 0
     assert state.exists()
 
@@ -56,6 +58,7 @@ def test_format_processed_summary_is_telegram_friendly(tmp_path):
             "archive": str(archive),
             "markdown": str(markdown),
             "json": str(archive / "pm_insights.json"),
+            "kanban_dry_run": str(archive / "kanban_dry_run" / "kanban_dry_run.md"),
         }
     ])
 
@@ -65,5 +68,6 @@ def test_format_processed_summary_is_telegram_friendly(tmp_path):
     assert "共分析 3 条评论" in summary
     assert "功能缺口（P1" in summary
     assert "性能与稳定性（P2" in summary
+    assert "Kanban dry-run" in summary
     assert str(markdown) in summary
     assert '"processed"' not in summary

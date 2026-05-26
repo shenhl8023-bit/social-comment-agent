@@ -71,6 +71,10 @@ def format_processed_summary(processed: list[dict[str, str]]) -> str:
         if isinstance(insights, list) and insights:
             lines.extend(["", "Top 需求："])
             lines.extend(f"- {insight}" for insight in insights)
+        if item.get("kanban_dry_run"):
+            lines.extend(["", f"Kanban dry-run：{item['kanban_dry_run']}"])
+        if item.get("kanban_dispatch"):
+            lines.append(f"Kanban dispatch：{item['kanban_dispatch']}")
         if item.get("markdown"):
             lines.extend(["", f"完整报告：{item['markdown']}"])
         lines.append("")
@@ -83,6 +87,10 @@ def scan_once(
     state_path: str | Path,
     platform: str = "unknown",
     analyzer_mode: str = "rules",
+    dry_run_kanban: bool = False,
+    dispatch_kanban: bool = False,
+    kanban_workspace: str = "scratch",
+    kanban_tenant: str | None = None,
 ) -> list[dict[str, str]]:
     inbox_path = Path(inbox)
     archive_path = Path(archive_dir)
@@ -99,14 +107,28 @@ def scan_once(
             continue
         timestamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
         run_dir = archive_path / timestamp / input_file.stem
-        paths = run_pipeline(input_file, run_dir, platform=platform, analyzer_mode=analyzer_mode)
+        paths = run_pipeline(
+            input_file,
+            run_dir,
+            platform=platform,
+            analyzer_mode=analyzer_mode,
+            dry_run_kanban=dry_run_kanban,
+            dispatch_kanban=dispatch_kanban,
+            kanban_workspace=kanban_workspace,
+            kanban_tenant=kanban_tenant,
+        )
         state[key] = fingerprint
-        processed.append({
+        item = {
             "input": str(input_file),
             "archive": str(run_dir),
             "markdown": str(paths["markdown"]),
             "json": str(paths["json"]),
-        })
+        }
+        if "kanban_dry_run_markdown" in paths:
+            item["kanban_dry_run"] = str(paths["kanban_dry_run_markdown"])
+        if "kanban_dispatch_markdown" in paths:
+            item["kanban_dispatch"] = str(paths["kanban_dispatch_markdown"])
+        processed.append(item)
     if processed:
         save_state(state_file, state)
     return processed
@@ -119,8 +141,22 @@ def main() -> None:
     parser.add_argument("--state", default=".social_comment_watch_state.json", help="Processed-file state path")
     parser.add_argument("--platform", default="unknown", help="Source platform name")
     parser.add_argument("--analyzer", choices=("rules", "llm"), default="rules", help="Analyzer mode")
+    parser.add_argument("--dry-run-kanban", action="store_true", help="Write Hermes Kanban create commands for each processed export")
+    parser.add_argument("--dispatch-kanban", action="store_true", help="Actually create Hermes Kanban cards for each processed export")
+    parser.add_argument("--kanban-workspace", default="scratch", help="Kanban workspace for dry-run/dispatch commands")
+    parser.add_argument("--kanban-tenant", default=None, help="Optional Kanban tenant namespace")
     args = parser.parse_args()
-    processed = scan_once(args.inbox, args.archive, args.state, platform=args.platform, analyzer_mode=args.analyzer)
+    processed = scan_once(
+        args.inbox,
+        args.archive,
+        args.state,
+        platform=args.platform,
+        analyzer_mode=args.analyzer,
+        dry_run_kanban=args.dry_run_kanban,
+        dispatch_kanban=args.dispatch_kanban,
+        kanban_workspace=args.kanban_workspace,
+        kanban_tenant=args.kanban_tenant,
+    )
     summary = format_processed_summary(processed)
     if summary:
         print(summary)

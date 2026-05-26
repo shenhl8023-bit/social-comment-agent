@@ -61,7 +61,28 @@ PYTHONPATH=src python -m social_comment_agent.watcher \
   --inbox data/inbox \
   --archive archive \
   --state .social_comment_watch_state.json \
-  --platform demo
+  --platform demo \
+  --dry-run-kanban \
+  --kanban-workspace scratch \
+  --kanban-tenant social-comment-agent
+```
+
+watcher 的 Kanban 行为和一次性 CLI 一样安全：
+
+- `--dry-run-kanban`：只在每个归档目录下生成 `kanban_dry_run/kanban_dry_run.md|json`，不会创建卡片。
+- `--dispatch-kanban`：显式创建 Kanban 卡片，并生成 `kanban_dispatch/kanban_dispatch.md|json` 审计报告。
+- 不传这两个参数时，只生成 PM 洞察和 agent task 文件。
+
+Hermes cron 可用脚本包装后以 `--no-agent` 静默运行；没有新文件时 watcher 不输出内容。
+
+```bash
+# 可选环境变量：SOCIAL_COMMENT_AGENT_INBOX / ARCHIVE / PLATFORM / ANALYZER
+# Kanban 模式：none | dry-run | dispatch
+export SOCIAL_COMMENT_AGENT_KANBAN_MODE=dry-run
+hermes cron create "*/30 * * * *" \
+  --name social-comment-watch \
+  --script /mnt/d/CodeProj/social-comment-agent/scripts/social_comment_watch.sh \
+  --no-agent
 ```
 
 ## Hermes Kanban dry-run / dispatch（可选）
