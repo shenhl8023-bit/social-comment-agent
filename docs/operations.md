@@ -106,7 +106,7 @@ SOCIAL_COMMENT_AGENT_ARCHIVE=/mnt/d/CodeProj/social-comment-agent/archive
 SOCIAL_COMMENT_AGENT_STATE=/mnt/d/CodeProj/social-comment-agent/.social_comment_watch_state.json
 SOCIAL_COMMENT_AGENT_PLATFORM=authorized_export
 SOCIAL_COMMENT_AGENT_ANALYZER=rules
-SOCIAL_COMMENT_AGENT_KANBAN_MODE=dry-run
+SOCIAL_COMMENT_AGENT_KANBAN_MODE=none
 SOCIAL_COMMENT_AGENT_KANBAN_WORKSPACE=/mnt/d/CodeProj/social-comment-agent
 SOCIAL_COMMENT_AGENT_KANBAN_TENANT=social-comment-agent
 SOCIAL_COMMENT_AGENT_TREND_MODE=week
@@ -190,7 +190,7 @@ PYTHONPATH=src python -m social_comment_agent.import_wizard path/to/export.csv -
 默认使用：
 
 ```bash
-SOCIAL_COMMENT_AGENT_KANBAN_MODE=dry-run
+SOCIAL_COMMENT_AGENT_KANBAN_MODE=none
 ```
 
 只有明确确认后才切到：
