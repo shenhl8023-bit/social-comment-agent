@@ -12,7 +12,7 @@
 
 ```bash
 cd /mnt/d/CodeProj/social-comment-agent
-PYTHONPATH=src python -m social_comment_agent.cli --input data/raw/sample_comments.jsonl --out out/demo --platform demo
+PYTHONPATH=src python -m social_comment_agent --input data/raw/sample_comments.jsonl --out out/demo --platform demo
 ```
 
 可选：启用 OpenAI-compatible LLM 分析。没有配置密钥时会自动降级为规则分析。
@@ -21,7 +21,7 @@ PYTHONPATH=src python -m social_comment_agent.cli --input data/raw/sample_commen
 export SOCIAL_COMMENT_LLM_ENDPOINT="https://api.openai.com/v1"
 export SOCIAL_COMMENT_LLM_API_KEY="..."
 export SOCIAL_COMMENT_LLM_MODEL="gpt-4o-mini"
-PYTHONPATH=src python -m social_comment_agent.cli \
+PYTHONPATH=src python -m social_comment_agent \
   --input data/raw/sample_comments.jsonl \
   --out out/demo-llm \
   --platform demo \
@@ -151,9 +151,9 @@ watcher 的 Kanban 行为和一次性 CLI 一样安全：
 - 归档目录：`/mnt/d/CodeProj/social-comment-agent/archive`
 - 状态文件：`/mnt/d/CodeProj/social-comment-agent/.social_comment_watch_state.json`
 - 分析器：`rules`
-- Kanban 模式：`dry-run`
-- 趋势分析：默认关闭；设置 `SOCIAL_COMMENT_AGENT_TREND_MODE=week` 或 `month` 后开启
-- 知识库：默认关闭；设置 `SOCIAL_COMMENT_AGENT_KNOWLEDGE_BASE=/mnt/d/CodeProj/social-comment-agent/knowledge_base` 后生成历史 PM 洞察索引
+- Kanban 模式：`none`
+- 趋势分析：默认开启周趋势；设置 `SOCIAL_COMMENT_AGENT_TREND_MODE=none` 可关闭，或设置为 `month` 改为月趋势
+- 知识库：默认生成到 `/mnt/d/CodeProj/social-comment-agent/knowledge_base`；清空 `SOCIAL_COMMENT_AGENT_KNOWLEDGE_BASE` 可关闭索引生成
 - Kanban workspace：`/mnt/d/CodeProj/social-comment-agent`
 - Kanban tenant：`social-comment-agent`
 
@@ -184,7 +184,7 @@ SOCIAL_COMMENT_AGENT_TREND_MODE=week ~/.hermes/scripts/social_comment_agent_watc
 SOCIAL_COMMENT_AGENT_KNOWLEDGE_BASE=/mnt/d/CodeProj/social-comment-agent/knowledge_base ~/.hermes/scripts/social_comment_agent_watch.sh
 ```
 
-注意：cron 默认只做 dry-run；只有显式设置 `SOCIAL_COMMENT_AGENT_KANBAN_MODE=dispatch` 才会真实创建 Kanban 卡片。趋势分析和知识库默认关闭，避免普通导出产生额外噪声；需要周/月趋势或历史洞察检索时显式设置对应环境变量。
+注意：cron 默认不生成 Kanban dry-run，也不会真实创建 Kanban 卡片；只有显式设置 `SOCIAL_COMMENT_AGENT_KANBAN_MODE=dry-run` 才会生成可审阅命令，设置 `dispatch` 才会真实创建卡片。趋势分析和知识库默认开启，方便自动摘要和历史洞察检索；如需完全静默的轻量扫描，可把 `SOCIAL_COMMENT_AGENT_TREND_MODE=none` 并清空 `SOCIAL_COMMENT_AGENT_KNOWLEDGE_BASE`。
 
 ## PM 洞察知识库
 
@@ -193,7 +193,7 @@ SOCIAL_COMMENT_AGENT_KNOWLEDGE_BASE=/mnt/d/CodeProj/social-comment-agent/knowled
 一次性 CLI 生成：
 
 ```bash
-PYTHONPATH=src python -m social_comment_agent.cli \
+PYTHONPATH=src python -m social_comment_agent \
   --input data/raw/sample_comments.jsonl \
   --out archive/manual-run \
   --platform demo \
@@ -210,7 +210,7 @@ PYTHONPATH=src python -m social_comment_agent.cli \
 CLI 检索历史洞察：
 
 ```bash
-PYTHONPATH=src python -m social_comment_agent.cli knowledge-base search "导出 报表" \
+PYTHONPATH=src python -m social_comment_agent knowledge-base search "导出 报表" \
   --index knowledge_base/knowledge_base.json \
   --limit 5
 ```
@@ -222,7 +222,7 @@ PYTHONPATH=src python -m social_comment_agent.cli knowledge-base search "导出 
 先生成 dry-run，不创建卡片：
 
 ```bash
-PYTHONPATH=src python -m social_comment_agent.cli \
+PYTHONPATH=src python -m social_comment_agent \
   --input data/raw/sample_comments.jsonl \
   --out out/demo-kanban \
   --platform demo \
@@ -240,7 +240,7 @@ PYTHONPATH=src python -m social_comment_agent.cli \
 确认无误后，再显式派发到 Hermes Kanban：
 
 ```bash
-PYTHONPATH=src python -m social_comment_agent.cli \
+PYTHONPATH=src python -m social_comment_agent \
   --input data/raw/sample_comments.jsonl \
   --out out/demo-kanban-dispatch \
   --platform demo \
@@ -309,7 +309,6 @@ PYTHONPATH=src python -m social_comment_agent.trends \
 
 ## 后续升级
 
-- 增加趋势分析：按周/月对比需求主题、负面反馈、Top 问题变化。
-- 增加人工确认后的 Kanban dispatch 流程：从 dry-run 报告中选择要真正创建的任务，避免自动刷屏。
-- 接入产品知识库：把历史 PM 洞察归档成可检索资料，给后续需求评审和 agent 分工复用。
 - 接入平台 API：新增 collector 适配器，但继续坚持官方 API、授权导出和限流边界。
+- 在真实评论样本稳定后，把 `SOCIAL_COMMENT_AGENT_KANBAN_MODE` 从 `none` 调整为 `dry-run`，人工确认任务质量后再考虑 `dispatch`。
+- 增加面向具体平台/业务的字段模板和术语词典，提高真实导出文件的识别率和主题分类质量。

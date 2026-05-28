@@ -9,6 +9,9 @@ description = "Automated social comment insight pipeline for PM/developer/test/a
 requires-python = ">=3.11"
 dependencies = []
 
+[project.scripts]
+social-comment-agent = "social_comment_agent.cli:main"
+
 [project.optional-dependencies]
 dev = ["pytest>=8"]
 
